@@ -4,42 +4,50 @@ PokemonApp.Pokemon = function (pokemonUri) {
  this.id = PokemonApp.Pokemon.idFromUri(pokemonUri);
 };
 PokemonApp.Pokemon.prototype.render = function () {
- 	console.log("Rendering pokemon: #" + this.id);
+ 	// console.log("Rendering pokemon: #" + this.id);
  	var self = this;
- 	var img = this.id + 1;
+ 	var img = parseInt(this.id)+ 1;
+ 	// console.log(self);
 
- 	$.when($.ajax("/api/pokemon/"+this.id), $.ajax("/api/sprite/"+img)).then(function(a1,a2){
+
+ 	$.when($.ajax("/api/pokemon/"+this.id), $.ajax("/api/sprite/"+img+"/"), $.ajax("/api/description/" + 315 )).then(function(a1,a2,a3){
  	 // console.log(a1);
  	 // console.log(a2);
- 	 console.log(a1[0].name);
- 	 console.log(a2[0].image);
- 	});
+ 	 // console.log(a1[0].name);
+ 	 // console.log(a2[0].image);
+ 	// });
 
- 	$.ajax({
-	 	url: "/api/pokemon/" + this.id,
-	 	success: function (response) {
-	 	self.info = response;
-	 	console.log("Pokemon info:");
-	 	// console.log(self.info);
+ 	// $.ajax({
+	 // 	url: "/api/pokemon/" + this.id,
+	 // 	success: function (response) {
+	 // 	self.info = response;
+	 // 	console.log("Pokemon info:");
+	 // 	// console.log(self.info);
 	 	$("#pokemon-modal").modal("show");
-	 	$("#pkmn-name").text(self.info.name);
- 		$("#pkmn-number").text(self.info.pkdx_id);
- 		$("#pkmn-height").text(self.info.height);
- 		$("#pkmn-weight").text(self.info.weight);
- 		$("#pkmn-hp").text(self.info.hp);
- 		$("#pkmn-atack-defense").text(self.info.attack +' - '+ self.info.defense);
- 		$("#pkmn-sp-atack-defense").text(self.info.sp_atk +' - '+ self.info.sp_def);
-		$("#pkmn-spd").text(self.info.speed);
- 		$("#pkmn-type").text(self.info.types.map(function(type){return type.name}).join(", "));
+	 	$("#pkmn-name").text(a1[0].name);
+ 		$("#pkmn-number").text(a1[0].pkdx_id);
+ 		$("#pkmn-height").text(a1[0].height);
+ 		$("#pkmn-weight").text(a1[0].weight);
+ 		$("#pkmn-hp").text(a1[0].hp);
+ 		$("#pkmn-atack-defense").text(a1[0].attack +' - '+ a1[0].defense);
+ 		$("#pkmn-sp-atack-defense").text(a1[0].sp_atk +' - '+ a1[0].sp_def);
+		$("#pkmn-spd").text(a1[0].speed);
+ 		$("#pkmn-type").text(a1[0].types.map(function(type){return type.name}).join(", "));
+ 		// console.log($("#pkmn-img").children('img'));
+		$("#pkmn-desc").text(a3[0].description);
+ 		$("#pkmn-img").children('img').attr('src', "http://pokeapi.co"+a2[0].image);
+ 		
  		// console.log(response);
- 	}
+ 	// }
 
  	});
 };
 
 PokemonApp.Pokemon.idFromUri = function (pokemonUri) {
  var uriSegments = pokemonUri.split("/");
+ console.log(uriSegments);
  var secondLast = uriSegments.length - 2;
+ console.log(secondLast);
  return uriSegments[secondLast];
 };
 
